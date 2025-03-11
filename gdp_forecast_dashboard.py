@@ -6,14 +6,13 @@ import plotly.graph_objects as go
 from datetime import datetime
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 
-# Set page configuration
+
 st.set_page_config(
     page_title="GDP Forecast Analysis Dashboard",
     page_icon="📈",
     layout="wide"
 )
 
-# Custom styling
 st.markdown("""
 <style>
 .stApp {
@@ -157,37 +156,32 @@ def create_forecast_plot(historical_data, model_predictions, forecast_data, fore
     return fig
 
 def main():
-    # Title with custom styling
-    st.markdown('<div class="main-title">GDP Forecast Analysis Dashboard</div>', unsafe_allow_html=True)
+        st.markdown('<div class="main-title">GDP Forecast Analysis Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div style="text-align: center; font-size: 20px; color: #2C3E50; margin-bottom: 30px;">Analysis and Predictions from 1970 to Future</div>', unsafe_allow_html=True)
     
     try:
-        # Load data and model
-        gdp_data = load_data()
+               gdp_data = load_data()
         model = load_model()
         
-        # Generate predictions
+   
         historical_predictions = np.exp(model.get_prediction(start=0).predicted_mean)
         forecast_steps = 10
         forecast = model.get_forecast(steps=forecast_steps)
         forecast_mean = np.exp(forecast.predicted_mean)
         forecast_ci = np.exp(forecast.conf_int())
         
-        # Create forecast dates
-        last_date = gdp_data.index[-1]
+           last_date = gdp_data.index[-1]
         forecast_dates = pd.date_range(start=last_date + pd.DateOffset(years=1), 
                                      periods=forecast_steps, 
                                      freq='Y')
         
-        # Create forecast dataframe
-        forecast_df = pd.DataFrame({
+                forecast_df = pd.DataFrame({
             'Predicted_GDP': forecast_mean,
             'Lower_CI': forecast_ci.iloc[:, 0],
             'Upper_CI': forecast_ci.iloc[:, 1]
         }, index=forecast_dates)
         
-        # Display metrics in columns
-        col1, col2, col3 = st.columns(3)
+               col1, col2, col3 = st.columns(3)
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             st.metric("Mean Squared Error", f"{mean_squared_error(gdp_data, historical_predictions):.2f}")
@@ -203,18 +197,15 @@ def main():
             st.metric("Total Data Points", len(gdp_data))
             st.markdown('</div>', unsafe_allow_html=True)
         
-        # Historical Analysis Section
-        st.markdown('<div class="section-header">Historical Analysis (1970-2025)</div>', unsafe_allow_html=True)
+              st.markdown('<div class="section-header">Historical Analysis (1970-2025)</div>', unsafe_allow_html=True)
         historical_fig = create_historical_analysis_plot(gdp_data, historical_predictions)
         st.plotly_chart(historical_fig, use_container_width=True)
         
-        # Forecast Section
-        st.markdown('<div class="section-header">Future Forecast</div>', unsafe_allow_html=True)
+               st.markdown('<div class="section-header">Future Forecast</div>', unsafe_allow_html=True)
         forecast_fig = create_forecast_plot(gdp_data, historical_predictions, forecast_df, forecast_dates)
         st.plotly_chart(forecast_fig, use_container_width=True)
         
-        # Data Tables
-        col1, col2 = st.columns(2)
+              col1, col2 = st.columns(2)
         with col1:
             st.markdown('<div class="section-header" style="font-size: 20px;">Historical Data</div>', unsafe_allow_html=True)
             st.dataframe(pd.DataFrame({
